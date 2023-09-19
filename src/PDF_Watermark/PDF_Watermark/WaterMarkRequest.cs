@@ -23,4 +23,8 @@ namespace PDF_Watermark
         public int Style { get; set; }
         public string Color { get; set; }
     }
+    public class WaterMarkAndSecureRequest:WaterMarkRequest
+    {
+        public string Password { get; set; }
+    }
 }
