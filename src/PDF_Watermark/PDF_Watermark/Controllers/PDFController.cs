@@ -11,6 +11,12 @@ namespace PDF_Watermark.Controllers
     [ApiController]
     public class PDFController : ControllerBase
     {
+        IConfiguration configuration;
+        public PDFController(IConfiguration configuration)
+        {
+            this.configuration = configuration;
+        }
+
         // POST <PDFController>
         [HttpPost]
         [Route("Watermark")]
@@ -41,10 +47,11 @@ namespace PDF_Watermark.Controllers
         [Route("WatermarkAndSecure")]
         public IActionResult AndSecure([FromBody] WaterMarkAndSecureRequest request)
         {
+            string Password = request.ServersidePassword ? this.configuration["PasswordForPDF"] : request.Password;
             IActionResult watermark = Post(request);
-            if (watermark is OkObjectResult okResult && okResult.Value is byte[] byteArray)
+            if (watermark is OkObjectResult okResult && okResult.Value is string base64File)
             {
-                SecurePDFRequest secRequest = new SecurePDFRequest() { InputPDFBase64 = Convert.ToBase64String(byteArray), Password = request.Password };
+                SecurePDFRequest secRequest = new SecurePDFRequest() { InputPDFBase64 = base64File, Password = Password };
                 return SecurePDF(secRequest);
             }
             else
@@ -55,8 +62,9 @@ namespace PDF_Watermark.Controllers
         [HttpPost]
         [Route("SecurePDF")]
         public IActionResult SecurePDF([FromBody] SecurePDFRequest request) {
+            string Password = request.ServersidePassword?this.configuration["PasswordForPDF"]:request.Password;
             IPDFServices PDF_Service = new PDFServices();
-            var responseFile = PDF_Service.SecurePDF(Convert.FromBase64String(request.InputPDFBase64),request.Password);
+            var responseFile = PDF_Service.SecurePDF(Convert.FromBase64String(request.InputPDFBase64),Password);
             return Ok(Convert.ToBase64String(responseFile));
         }
     }

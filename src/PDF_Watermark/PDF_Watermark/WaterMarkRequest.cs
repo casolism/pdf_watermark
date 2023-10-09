@@ -26,5 +26,7 @@ namespace PDF_Watermark
     public class WaterMarkAndSecureRequest:WaterMarkRequest
     {
         public string Password { get; set; }
+        public bool ServersidePassword { get; set; }
+
     }
 }

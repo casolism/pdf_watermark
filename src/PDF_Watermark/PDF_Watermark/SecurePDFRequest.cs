@@ -6,6 +6,7 @@ namespace PDF_Watermark
     {
         public string InputPDFBase64 { get; set; }
         public string Password { get; set; }
+        public bool ServersidePassword { get; set; }
     }
 
 }
